@@ -13,8 +13,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Scale factor: 2/3 ≈ 0.6667
 local scale = 2/3
 
--- GitHub raw URL for current_key.lua
-local GITHUB_KEY_URL = "https://raw.githubusercontent.com/kimpler1/scriptkey/main/current_key.lua"  # Ваш raw URL
+-- GitHub raw URL for keyscript.lua
+local GITHUB_KEY_URL = "https://raw.githubusercontent.com/kimpler1/scriptkey/main/keyscript.lua"  # Ваш raw URL
 
 -- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
