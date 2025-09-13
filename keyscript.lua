@@ -112,3 +112,61 @@ else
     print("Keys.lua loaded, current key: " .. tostring(currentKey))
     _G.CurrentKey = currentKey  -- Сохраняем ключ в глобальную переменную
 end
+
+-- Add verify logic
+verifyButton.MouseButton1Click:Connect(function()
+    local inputKey = keyInput.Text
+    if inputKey == "" then
+        statusLabel.Text = "Enter a key!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        return
+    end
+    
+    if _G.CurrentKey and inputKey == _G.CurrentKey then
+        statusLabel.Text = "Ваш скрипт активирован"
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        -- Here you can add code to load your main script after verification
+        -- For example: loadstring(game:HttpGet("your_script_url"))()
+        wait(2)
+        screenGui:Destroy()
+    else
+        statusLabel.Text = "Invalid key!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        keyInput.Text = ""
+    end
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+keyInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        verifyButton.MouseButton1Click:Fire()
+    end
+end)
+
+-- Fade in animation
+mainFrame.BackgroundTransparency = 1
+titleLabel.TextTransparency = 1
+keyInput.BackgroundTransparency = 1
+keyInput.TextTransparency = 1
+verifyButton.BackgroundTransparency = 1
+verifyButton.TextTransparency = 1
+statusLabel.TextTransparency = 1
+closeButton.BackgroundTransparency = 1
+closeButton.TextTransparency = 1
+
+local fadeIn = TweenService:Create(mainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0})
+local fadeInText = TweenService:Create(titleLabel, TweenInfo.new(0.5), {TextTransparency = 0})
+local fadeInInput = TweenService:Create(keyInput, TweenInfo.new(0.5, Enum.EasingStyle.Back), {BackgroundTransparency = 0, TextTransparency = 0})
+local fadeInButton = TweenService:Create(verifyButton, TweenInfo.new(0.5), {BackgroundTransparency = 0, TextTransparency = 0})
+local fadeInStatus = TweenService:Create(statusLabel, TweenInfo.new(0.5), {TextTransparency = 0})
+local fadeInClose = TweenService:Create(closeButton, TweenInfo.new(0.5), {BackgroundTransparency = 0, TextTransparency = 0})
+
+fadeIn:Play()
+fadeInText:Play()
+fadeInInput:Play()
+fadeInButton:Play()
+fadeInStatus:Play()
+fadeInClose:Play()
