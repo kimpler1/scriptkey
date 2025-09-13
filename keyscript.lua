@@ -98,3 +98,17 @@ closeButton.Parent = mainFrame
 local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 15 * scale)
 closeCorner.Parent = closeButton
+
+-- Load keys.lua at startup
+local KEYS_URL = "https://raw.githubusercontent.com/kimpler1/scriptkey/main/keys.lua"
+print("Attempting to load keys.lua from: " .. KEYS_URL)
+local successKeys, currentKey = pcall(function()
+    return loadstring(game:HttpGet(KEYS_URL))()
+end)
+if not successKeys then
+    warn("Failed to load keys.lua: " .. tostring(currentKey))
+    _G.CurrentKey = nil
+else
+    print("Keys.lua loaded, current key: " .. tostring(currentKey))
+    _G.CurrentKey = currentKey  -- Сохраняем ключ в глобальную переменную
+end
