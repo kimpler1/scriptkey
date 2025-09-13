@@ -1,93 +1,123 @@
 -- Key System GUI Script for Delta X Injector
+-- Updated version with improved GUI, debug prints, and ensured key loading
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Scaling factor for GUI
 local scale = 2/3
 
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "KeySystemGUI"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
+-- Main Frame with improved styling (darker theme, borders)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 400 * scale, 0, 300 * scale)
-mainFrame.Position = UDim2.new(0.5, -200 * scale, 0.5, -150 * scale)
-mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.Size = UDim2.new(0, 450 * scale, 0, 350 * scale)  -- Slightly larger for better usability
+mainFrame.Position = UDim2.new(0.5, -225 * scale, 0.5, -175 * scale)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)  -- Darker background
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
 
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 10 * scale)
+corner.CornerRadius = UDim.new(0, 12 * scale)  -- Softer corners
 corner.Parent = mainFrame
 
+-- Add a subtle stroke for border effect
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(50, 50, 50)
+stroke.Thickness = 1
+stroke.Transparency = 0.5
+stroke.Parent = mainFrame
+
+-- Title Label with gradient
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, 0, 0, 50 * scale)
+titleLabel.Size = UDim2.new(1, 0, 0, 60 * scale)
 titleLabel.Position = UDim2.new(0, 0, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Key System"
+titleLabel.Text = "Система Активации Ключа"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.TextScaled = true
-titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Font = Enum.Font.GothamBlack  -- Bolder font
 titleLabel.Parent = mainFrame
 
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 150, 255))
+}
+gradient.Parent = titleLabel
+
+-- Key Input with placeholder and border
 local keyInput = Instance.new("TextBox")
 keyInput.Name = "KeyInput"
-keyInput.Size = UDim2.new(0.8, 0, 0, 40 * scale)
-keyInput.Position = UDim2.new(0.1, 0, 0, 70 * scale)
-keyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+keyInput.Size = UDim2.new(0.85, 0, 0, 50 * scale)
+keyInput.Position = UDim2.new(0.075, 0, 0, 80 * scale)
+keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 keyInput.BorderSizePixel = 0
 keyInput.Text = ""
-keyInput.PlaceholderText = "Enter your key here..."
+keyInput.PlaceholderText = "Введите ключ здесь..."
+keyInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
 keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 keyInput.TextScaled = true
-keyInput.Font = Enum.Font.Gotham
+keyInput.Font = Enum.Font.GothamSemibold
 keyInput.Parent = mainFrame
 
 local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 5 * scale)
+inputCorner.CornerRadius = UDim.new(0, 8 * scale)
 inputCorner.Parent = keyInput
 
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Color = Color3.fromRGB(60, 60, 60)
+inputStroke.Thickness = 1
+inputStroke.Parent = keyInput
+
+-- Verify Button with hover effect (we'll add later)
 local verifyButton = Instance.new("TextButton")
 verifyButton.Name = "VerifyButton"
-verifyButton.Size = UDim2.new(0.8, 0, 0, 40 * scale)
-verifyButton.Position = UDim2.new(0.1, 0, 0, 130 * scale)
-verifyButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+verifyButton.Size = UDim2.new(0.85, 0, 0, 50 * scale)
+verifyButton.Position = UDim2.new(0.075, 0, 0, 150 * scale)
+verifyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)  -- Brighter green
 verifyButton.BorderSizePixel = 0
-verifyButton.Text = "Verify Key"
+verifyButton.Text = "Проверить Ключ"
 verifyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 verifyButton.TextScaled = true
 verifyButton.Font = Enum.Font.GothamBold
 verifyButton.Parent = mainFrame
 
 local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0, 5 * scale)
+buttonCorner.CornerRadius = UDim.new(0, 8 * scale)
 buttonCorner.Parent = verifyButton
 
+-- Status Label
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.new(0.8, 0, 0, 30 * scale)
-statusLabel.Position = UDim2.new(0.1, 0, 0, 180 * scale)
+statusLabel.Size = UDim2.new(0.85, 0, 0, 40 * scale)
+statusLabel.Position = UDim2.new(0.075, 0, 0, 220 * scale)
 statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Enter key and verify."
+statusLabel.Text = "Введите ключ и нажмите кнопку."
 statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 statusLabel.TextScaled = true
+statusLabel.TextWrapped = true
 statusLabel.Font = Enum.Font.Gotham
 statusLabel.Parent = mainFrame
 
+-- Close Button (improved: larger, circular)
 local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
-closeButton.Size = UDim2.new(0, 30 * scale, 0, 30 * scale)
-closeButton.Position = UDim2.new(1, -35 * scale, 0, 5 * scale)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.Size = UDim2.new(0, 40 * scale, 0, 40 * scale)
+closeButton.Position = UDim2.new(1, -45 * scale, 0, 10 * scale)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)  -- Brighter red
 closeButton.BorderSizePixel = 0
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -96,10 +126,10 @@ closeButton.Font = Enum.Font.GothamBold
 closeButton.Parent = mainFrame
 
 local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 15 * scale)
+closeCorner.CornerRadius = UDim.new(1, 0)  -- Fully circular
 closeCorner.Parent = closeButton
 
--- Load keys.lua at startup
+-- Load keys.lua immediately after script load (as requested)
 local KEYS_URL = "https://raw.githubusercontent.com/kimpler1/scriptkey/main/keys.lua"
 print("Attempting to load keys.lua from: " .. KEYS_URL)
 local successKeys, currentKey = pcall(function()
@@ -108,65 +138,84 @@ end)
 if not successKeys then
     warn("Failed to load keys.lua: " .. tostring(currentKey))
     _G.CurrentKey = nil
+    statusLabel.Text = "Ошибка загрузки ключа. Попробуйте позже."
+    statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 else
-    print("Keys.lua loaded, current key: " .. tostring(currentKey))
-    _G.CurrentKey = currentKey  -- Сохраняем ключ в глобальную переменную
+    print("Keys.lua loaded successfully. Current key: " .. tostring(currentKey))
+    _G.CurrentKey = currentKey  -- Store in global variable
 end
 
--- Add verify logic
+-- Verify logic with debug prints
 verifyButton.MouseButton1Click:Connect(function()
-    local inputKey = keyInput.Text
+    local inputKey = string.gsub(keyInput.Text, "%s+", "")  -- Trim whitespace
+    print("Verify clicked! Input key: '" .. inputKey .. "' | Current key: '" .. tostring(_G.CurrentKey) .. "'")
+    
     if inputKey == "" then
-        statusLabel.Text = "Enter a key!"
+        statusLabel.Text = "Введите ключ!"
         statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        print("Empty key input")
         return
     end
     
     if _G.CurrentKey and inputKey == _G.CurrentKey then
-        statusLabel.Text = "Ваш скрипт активирован"
+        print("Key is valid!")
+        statusLabel.Text = "Ваш скрипт активирован!"
         statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        -- Here you can add code to load your main script after verification
-        -- For example: loadstring(game:HttpGet("your_script_url"))()
+        -- Load your main script here after verification
+        -- Example: loadstring(game:HttpGet("https://raw.githubusercontent.com/yourrepo/main/main_script.lua"))()
         wait(2)
         screenGui:Destroy()
     else
-        statusLabel.Text = "Invalid key!"
+        print("Key is invalid or CurrentKey is nil")
+        statusLabel.Text = "Неверный ключ!"
         statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         keyInput.Text = ""
     end
 end)
 
+-- Close button logic
 closeButton.MouseButton1Click:Connect(function()
+    print("Close button clicked")
     screenGui:Destroy()
 end)
 
+-- Enter key press to verify
 keyInput.FocusLost:Connect(function(enterPressed)
     if enterPressed then
         verifyButton.MouseButton1Click:Fire()
     end
 end)
 
--- Fade in animation
+-- Add hover effect to verify button
+verifyButton.MouseEnter:Connect(function()
+    TweenService:Create(verifyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 255, 0)}):Play()
+end)
+verifyButton.MouseLeave:Connect(function()
+    TweenService:Create(verifyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}):Play()
+end)
+
+-- Fade-in animation for all elements
+local function fadeIn(element, props)
+    TweenService:Create(element, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+end
+
 mainFrame.BackgroundTransparency = 1
+fadeIn(mainFrame, {BackgroundTransparency = 0})
+
 titleLabel.TextTransparency = 1
+fadeIn(titleLabel, {TextTransparency = 0})
+
 keyInput.BackgroundTransparency = 1
 keyInput.TextTransparency = 1
+fadeIn(keyInput, {BackgroundTransparency = 0, TextTransparency = 0})
+
 verifyButton.BackgroundTransparency = 1
 verifyButton.TextTransparency = 1
+fadeIn(verifyButton, {BackgroundTransparency = 0, TextTransparency = 0})
+
 statusLabel.TextTransparency = 1
+fadeIn(statusLabel, {TextTransparency = 0})
+
 closeButton.BackgroundTransparency = 1
 closeButton.TextTransparency = 1
-
-local fadeIn = TweenService:Create(mainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0})
-local fadeInText = TweenService:Create(titleLabel, TweenInfo.new(0.5), {TextTransparency = 0})
-local fadeInInput = TweenService:Create(keyInput, TweenInfo.new(0.5, Enum.EasingStyle.Back), {BackgroundTransparency = 0, TextTransparency = 0})
-local fadeInButton = TweenService:Create(verifyButton, TweenInfo.new(0.5), {BackgroundTransparency = 0, TextTransparency = 0})
-local fadeInStatus = TweenService:Create(statusLabel, TweenInfo.new(0.5), {TextTransparency = 0})
-local fadeInClose = TweenService:Create(closeButton, TweenInfo.new(0.5), {BackgroundTransparency = 0, TextTransparency = 0})
-
-fadeIn:Play()
-fadeInText:Play()
-fadeInInput:Play()
-fadeInButton:Play()
-fadeInStatus:Play()
-fadeInClose:Play()
+fadeIn(closeButton, {BackgroundTransparency = 0, TextTransparency = 0})
