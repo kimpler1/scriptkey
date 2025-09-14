@@ -8,11 +8,8 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Scaling factor for GUI (reduced by 1.25 times: original 2/3 ≈0.666, new ≈0.533)
-local scale = 2/3.75  -- 2/3 / 1.25 = 2/3.75 ≈0.533
-
--- Language toggle: true for English, false for Russian
-local isEnglish = true
+-- Scaling factor for GUI
+local scale = 2/3
 
 -- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
@@ -61,18 +58,6 @@ gradient.Color = ColorSequence.new{
 }
 gradient.Parent = titleLabel
 
--- Russian Flag Button (top-left)
-local flagButton = Instance.new("TextButton")
-flagButton.Name = "FlagButton"
-flagButton.Size = UDim2.new(0, 40 * scale, 0, 40 * scale)
-flagButton.Position = UDim2.new(0, 10 * scale, 0, 10 * scale)
-flagButton.BackgroundTransparency = 1
-flagButton.Text = "🇷🇺"
-flagButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-flagButton.TextScaled = true
-flagButton.Font = Enum.Font.GothamBold
-flagButton.Parent = mainFrame
-
 -- Key Input with placeholder and border
 local keyInput = Instance.new("TextBox")
 keyInput.Name = "KeyInput"
@@ -81,7 +66,7 @@ keyInput.Position = UDim2.new(0.075, 0, 0, 80 * scale)
 keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 keyInput.BorderSizePixel = 0
 keyInput.Text = ""
-keyInput.PlaceholderText = "Enter key here..."
+keyInput.PlaceholderText = "Введите ключ здесь..."
 keyInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
 keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 keyInput.TextScaled = true
@@ -97,14 +82,14 @@ inputStroke.Color = Color3.fromRGB(60, 60, 60)
 inputStroke.Thickness = 1
 inputStroke.Parent = keyInput
 
--- Verify Button (left side)
+-- Verify Button with hover effect
 local verifyButton = Instance.new("TextButton")
 verifyButton.Name = "VerifyButton"
-verifyButton.Size = UDim2.new(0.4, 0, 0, 50 * scale)
+verifyButton.Size = UDim2.new(0.85, 0, 0, 50 * scale)
 verifyButton.Position = UDim2.new(0.075, 0, 0, 150 * scale)
 verifyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)  -- Brighter green
 verifyButton.BorderSizePixel = 0
-verifyButton.Text = "Verify Key"
+verifyButton.Text = "Проверить Ключ"
 verifyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 verifyButton.TextScaled = true
 verifyButton.Font = Enum.Font.GothamBold
@@ -114,14 +99,14 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 8 * scale)
 buttonCorner.Parent = verifyButton
 
--- New Get Key Button (right side, different color: blue)
+-- New Get Key Button
 local getKeyButton = Instance.new("TextButton")
 getKeyButton.Name = "GetKeyButton"
-getKeyButton.Size = UDim2.new(0.4, 0, 0, 50 * scale)
-getKeyButton.Position = UDim2.new(0.525, 0, 0, 150 * scale)
-getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)  -- Blue color
+getKeyButton.Size = UDim2.new(0.85, 0, 0, 50 * scale)
+getKeyButton.Position = UDim2.new(0.075, 0, 0, 210 * scale)
+getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Green as in image
 getKeyButton.BorderSizePixel = 0
-getKeyButton.Text = "Get Key"
+getKeyButton.Text = "Получить ключ"
 getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyButton.TextScaled = true
 getKeyButton.Font = Enum.Font.GothamBold
@@ -134,10 +119,10 @@ getKeyCorner.Parent = getKeyButton
 -- Status Label (moved lower)
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.new(0.85, 0, 0, 120 * scale)  -- Increased for multi-line
-statusLabel.Position = UDim2.new(0.075, 0, 0, 210 * scale)
+statusLabel.Size = UDim2.new(0.85, 0, 0, 80 * scale)  -- Increased for multi-line
+statusLabel.Position = UDim2.new(0.075, 0, 0, 270 * scale)
 statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Enter key and verify."
+statusLabel.Text = "Введите ключ и нажмите кнопку."
 statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 statusLabel.TextScaled = true
 statusLabel.TextWrapped = true
@@ -170,33 +155,12 @@ end)
 if not successKeys then
     warn("Failed to load keys.lua: " .. tostring(currentKey))
     _G.CurrentKey = nil
-    statusLabel.Text = "Error loading key. Try again later."
+    statusLabel.Text = "Ошибка загрузки ключа. Попробуйте позже."
     statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 else
     print("Keys.lua loaded successfully. Current key: " .. tostring(currentKey))
     _G.CurrentKey = currentKey  -- Store in global variable
 end
-
--- Function to toggle language
-local function toggleLanguage()
-    isEnglish = not isEnglish
-    if isEnglish then
-        titleLabel.Text = "Key System"
-        keyInput.PlaceholderText = "Enter key here..."
-        verifyButton.Text = "Verify Key"
-        getKeyButton.Text = "Get Key"
-        statusLabel.Text = "Enter key and verify."
-    else
-        titleLabel.Text = "Key System"  -- Keep title same or translate if needed
-        keyInput.PlaceholderText = "Введите ключ здесь..."
-        verifyButton.Text = "Проверить Ключ"
-        getKeyButton.Text = "Получить ключ"
-        statusLabel.Text = "Введите ключ и нажмите кнопку."
-    end
-end
-
--- Flag button logic: Toggle language
-flagButton.MouseButton1Click:Connect(toggleLanguage)
 
 -- Verify logic with debug prints
 verifyButton.MouseButton1Click:Connect(function()
@@ -204,7 +168,7 @@ verifyButton.MouseButton1Click:Connect(function()
     print("Verify clicked! Input key: '" .. inputKey .. "' | Current key: '" .. tostring(_G.CurrentKey) .. "'")
     
     if inputKey == "" then
-        statusLabel.Text = isEnglish and "Enter a key!" or "Введите ключ!"
+        statusLabel.Text = "Введите ключ!"
         statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         print("Empty key input")
         return
@@ -212,7 +176,7 @@ verifyButton.MouseButton1Click:Connect(function()
     
     if _G.CurrentKey and inputKey == _G.CurrentKey then
         print("Key is valid!")
-        statusLabel.Text = isEnglish and "Your script is activated!" or "Ваш скрипт активирован!"
+        statusLabel.Text = "Ваш скрипт активирован!"
         statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
         -- Load the main script after verification
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))();
@@ -220,7 +184,7 @@ verifyButton.MouseButton1Click:Connect(function()
         screenGui:Destroy()
     else
         print("Key is invalid or CurrentKey is nil")
-        statusLabel.Text = isEnglish and "Invalid key!" or "Неверный ключ!"
+        statusLabel.Text = "Неверный ключ!"
         statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         keyInput.Text = ""
     end
@@ -228,14 +192,14 @@ end)
 
 -- Get Key button logic: Copy bot link to clipboard
 getKeyButton.MouseButton1Click:Connect(function()
-    local botLink = "@keybotrbscripts_bot"
+    local botLink = "https://t.me/keybotrbscripts_bot"
     if setclipboard then
         setclipboard(botLink)
-        statusLabel.Text = isEnglish and "Link copied to clipboard: " .. botLink or "Ссылка скопирована в буфер обмена: " .. botLink
+        statusLabel.Text = "Ссылка скопирована в буфер обмена: " .. botLink
         statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
         print("Copied to clipboard: " .. botLink)
     else
-        statusLabel.Text = isEnglish and "setclipboard unavailable. Link: " .. botLink or "setclipboard недоступен. Ссылка: " .. botLink
+        statusLabel.Text = "setclipboard недоступен. Ссылка: " .. botLink
         statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         print("setclipboard not available")
     end
@@ -264,10 +228,10 @@ end)
 
 -- Add hover effect to get key button
 getKeyButton.MouseEnter:Connect(function()
-    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 150, 255)}):Play()
+    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}):Play()
 end)
 getKeyButton.MouseLeave:Connect(function()
-    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 100, 255)}):Play()
+    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 255, 0)}):Play()
 end)
 
 -- Fade-in animation for all elements
@@ -299,6 +263,3 @@ fadeIn(statusLabel, {TextTransparency = 0})
 closeButton.BackgroundTransparency = 1
 closeButton.TextTransparency = 1
 fadeIn(closeButton, {BackgroundTransparency = 0, TextTransparency = 0})
-
-flagButton.TextTransparency = 1
-fadeIn(flagButton, {TextTransparency = 0})
