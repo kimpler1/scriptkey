@@ -20,8 +20,8 @@ screenGui.ResetOnSpawn = false
 -- Main Frame with improved styling (darker theme, borders)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 450 * scale, 0, 350 * scale)  -- Slightly larger for better usability
-mainFrame.Position = UDim2.new(0.5, -225 * scale, 0.5, -175 * scale)
+mainFrame.Size = UDim2.new(0, 450 * scale, 0, 400 * scale)  -- Increased height for new button
+mainFrame.Position = UDim2.new(0.5, -225 * scale, 0.5, -200 * scale)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)  -- Darker background
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -45,7 +45,7 @@ titleLabel.Name = "TitleLabel"
 titleLabel.Size = UDim2.new(1, 0, 0, 60 * scale)
 titleLabel.Position = UDim2.new(0, 0, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Система Активации Ключа"
+titleLabel.Text = "Key System"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.TextScaled = true
 titleLabel.Font = Enum.Font.GothamBlack  -- Bolder font
@@ -82,7 +82,7 @@ inputStroke.Color = Color3.fromRGB(60, 60, 60)
 inputStroke.Thickness = 1
 inputStroke.Parent = keyInput
 
--- Verify Button with hover effect (we'll add later)
+-- Verify Button with hover effect
 local verifyButton = Instance.new("TextButton")
 verifyButton.Name = "VerifyButton"
 verifyButton.Size = UDim2.new(0.85, 0, 0, 50 * scale)
@@ -99,11 +99,28 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 8 * scale)
 buttonCorner.Parent = verifyButton
 
--- Status Label
+-- New Get Key Button
+local getKeyButton = Instance.new("TextButton")
+getKeyButton.Name = "GetKeyButton"
+getKeyButton.Size = UDim2.new(0.85, 0, 0, 50 * scale)
+getKeyButton.Position = UDim2.new(0.075, 0, 0, 210 * scale)
+getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Green as in image
+getKeyButton.BorderSizePixel = 0
+getKeyButton.Text = "Получить ключ"
+getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyButton.TextScaled = true
+getKeyButton.Font = Enum.Font.GothamBold
+getKeyButton.Parent = mainFrame
+
+local getKeyCorner = Instance.new("UICorner")
+getKeyCorner.CornerRadius = UDim.new(0, 8 * scale)
+getKeyCorner.Parent = getKeyButton
+
+-- Status Label (moved lower)
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.new(0.85, 0, 0, 40 * scale)
-statusLabel.Position = UDim2.new(0.075, 0, 0, 220 * scale)
+statusLabel.Size = UDim2.new(0.85, 0, 0, 80 * scale)  -- Increased for multi-line
+statusLabel.Position = UDim2.new(0.075, 0, 0, 270 * scale)
 statusLabel.BackgroundTransparency = 1
 statusLabel.Text = "Введите ключ и нажмите кнопку."
 statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -173,6 +190,13 @@ verifyButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Get Key button logic: Display link in status (user can copy manually)
+getKeyButton.MouseButton1Click:Connect(function()
+    statusLabel.Text = "Скопируйте ссылку: https://t.me/robloxskriptandsoft"
+    statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    print("Get key clicked! Link: https://t.me/robloxskriptandsoft")
+end)
+
 -- Close button logic
 closeButton.MouseButton1Click:Connect(function()
     print("Close button clicked")
@@ -194,6 +218,14 @@ verifyButton.MouseLeave:Connect(function()
     TweenService:Create(verifyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}):Play()
 end)
 
+-- Add hover effect to get key button
+getKeyButton.MouseEnter:Connect(function()
+    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 200, 0)}):Play()
+end)
+getKeyButton.MouseLeave:Connect(function()
+    TweenService:Create(getKeyButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 255, 0)}):Play()
+end)
+
 -- Fade-in animation for all elements
 local function fadeIn(element, props)
     TweenService:Create(element, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
@@ -212,6 +244,10 @@ fadeIn(keyInput, {BackgroundTransparency = 0, TextTransparency = 0})
 verifyButton.BackgroundTransparency = 1
 verifyButton.TextTransparency = 1
 fadeIn(verifyButton, {BackgroundTransparency = 0, TextTransparency = 0})
+
+getKeyButton.BackgroundTransparency = 1
+getKeyButton.TextTransparency = 1
+fadeIn(getKeyButton, {BackgroundTransparency = 0, TextTransparency = 0})
 
 statusLabel.TextTransparency = 1
 fadeIn(statusLabel, {TextTransparency = 0})
