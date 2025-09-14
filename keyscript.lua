@@ -190,11 +190,19 @@ verifyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Get Key button logic: Display link in status (user can copy manually)
+-- Get Key button logic: Copy bot link to clipboard
 getKeyButton.MouseButton1Click:Connect(function()
-    statusLabel.Text = "Скопируйте ссылку: https://t.me/robloxskriptandsoft"
-    statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-    print("Get key clicked! Link: https://t.me/robloxskriptandsoft")
+    local botLink = "@keybotrbscripts_bot"
+    if setclipboard then
+        setclipboard(botLink)
+        statusLabel.Text = "Ссылка скопирована в буфер обмена: " .. botLink
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        print("Copied to clipboard: " .. botLink)
+    else
+        statusLabel.Text = "setclipboard недоступен. Ссылка: " .. botLink
+        statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        print("setclipboard not available")
+    end
 end)
 
 -- Close button logic
