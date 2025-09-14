@@ -129,7 +129,7 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(1, 0)  -- Fully circular
 closeCorner.Parent = closeButton
 
--- Load keys.lua immediately after script load (as requested)
+-- Load keys.lua immediately after script load
 local KEYS_URL = "https://raw.githubusercontent.com/kimpler1/scriptkey/main/keys.lua"
 print("Attempting to load keys.lua from: " .. KEYS_URL)
 local successKeys, currentKey = pcall(function()
@@ -161,8 +161,8 @@ verifyButton.MouseButton1Click:Connect(function()
         print("Key is valid!")
         statusLabel.Text = "Ваш скрипт активирован!"
         statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        -- Load your main script here after verification
-        -- Example: loadstring(game:HttpGet("https://raw.githubusercontent.com/yourrepo/main/main_script.lua"))()
+        -- Load the main script after verification
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ArdyBotzz/NatHub/refs/heads/master/NatHub.lua"))();
         wait(2)
         screenGui:Destroy()
     else
