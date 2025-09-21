@@ -228,7 +228,7 @@ end)
 
 -- Get Key button logic: Copy bot link to clipboard
 getKeyButton.MouseButton1Click:Connect(function()
-    local botLink = "https://t.me/keybotrbscripts_bot"
+    local botLink = "https://t.me/keyrb_bot"
     if setclipboard then
         setclipboard(botLink)
         statusLabel.Text = isEnglish and "Link copied to clipboard: " .. botLink or "Ссылка скопирована в буфер обмена: " .. botLink
