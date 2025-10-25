@@ -1,6 +1,7 @@
 -- Key System GUI Script for Delta X Injector
 -- Updated version with improved GUI, debug prints, and ensured key loading
 -- New: Load botLink from keys.lua for Get Key button
+-- New: Default language is Russian, flag starts as British (🇬🇧), toggles to Russian (🇷🇺) and back
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -12,8 +13,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Scaling factor for GUI (reduced by 1.25 times: original 2/3 ≈0.666, new ≈0.533)
 local scale = 2/3.75  -- 2/3 / 1.25 = 2/3.75 ≈0.533
 
--- Language toggle: true for English, false for Russian
-local isEnglish = true
+-- Language toggle: false for Russian (default), true for English
+local isEnglish = false
 
 -- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
@@ -62,13 +63,13 @@ gradient.Color = ColorSequence.new{
 }
 gradient.Parent = titleLabel
 
--- Russian Flag Button (top-left)
+-- Language Toggle Button (top-left, starts as British flag)
 local flagButton = Instance.new("TextButton")
 flagButton.Name = "FlagButton"
 flagButton.Size = UDim2.new(0, 40 * scale, 0, 40 * scale)
 flagButton.Position = UDim2.new(0, 10 * scale, 0, 10 * scale)
 flagButton.BackgroundTransparency = 1
-flagButton.Text = "🇷🇺"
+flagButton.Text = "🇬🇧"  -- Start with British flag
 flagButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 flagButton.TextScaled = true
 flagButton.Font = Enum.Font.GothamBold
@@ -82,7 +83,7 @@ keyInput.Position = UDim2.new(0.075, 0, 0, 80 * scale)
 keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 keyInput.BorderSizePixel = 0
 keyInput.Text = ""
-keyInput.PlaceholderText = "Enter key here..."
+keyInput.PlaceholderText = "Введите ключ здесь..."  -- Default to Russian
 keyInput.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
 keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 keyInput.TextScaled = true
@@ -105,7 +106,7 @@ verifyButton.Size = UDim2.new(0.4, 0, 0, 50 * scale)
 verifyButton.Position = UDim2.new(0.075, 0, 0, 150 * scale)
 verifyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)  -- Brighter green
 verifyButton.BorderSizePixel = 0
-verifyButton.Text = "Verify Key"
+verifyButton.Text = "Проверить Ключ"  -- Default to Russian
 verifyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 verifyButton.TextScaled = true
 verifyButton.Font = Enum.Font.GothamBold
@@ -122,7 +123,7 @@ getKeyButton.Size = UDim2.new(0.4, 0, 0, 50 * scale)
 getKeyButton.Position = UDim2.new(0.525, 0, 0, 150 * scale)
 getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)  -- Blue color
 getKeyButton.BorderSizePixel = 0
-getKeyButton.Text = "Get Key"
+getKeyButton.Text = "Получить ключ"  -- Default to Russian
 getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 getKeyButton.TextScaled = true
 getKeyButton.Font = Enum.Font.GothamBold
@@ -138,7 +139,7 @@ statusLabel.Name = "StatusLabel"
 statusLabel.Size = UDim2.new(0.85, 0, 0, 120 * scale)  -- Increased for multi-line
 statusLabel.Position = UDim2.new(0.075, 0, 0, 210 * scale)
 statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Enter key and verify."
+statusLabel.Text = "Введите ключ и нажмите кнопку."  -- Default to Russian
 statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 statusLabel.TextScaled = true
 statusLabel.TextWrapped = true
@@ -172,7 +173,7 @@ if not successKeys then
     warn("Failed to load keys.lua: " .. tostring(result))
     _G.CurrentKey = nil
     _G.BotLink = nil
-    statusLabel.Text = "Error loading key. Try again later."
+    statusLabel.Text = isEnglish and "Error loading key. Try again later." or "Ошибка загрузки ключа. Попробуйте позже."
     statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 else
     if type(result) == "table" and result.key and result.botLink then
@@ -195,12 +196,14 @@ local function toggleLanguage()
         verifyButton.Text = "Verify Key"
         getKeyButton.Text = "Get Key"
         statusLabel.Text = "Enter key and verify."
+        flagButton.Text = "🇷🇺"  -- Show Russian flag when English
     else
         titleLabel.Text = "Key System"  -- Keep title same or translate if needed
         keyInput.PlaceholderText = "Введите ключ здесь..."
         verifyButton.Text = "Проверить Ключ"
         getKeyButton.Text = "Получить ключ"
         statusLabel.Text = "Введите ключ и нажмите кнопку."
+        flagButton.Text = "🇬🇧"  -- Show British flag when Russian
     end
 end
 
@@ -224,7 +227,7 @@ verifyButton.MouseButton1Click:Connect(function()
         statusLabel.Text = isEnglish and "Your script is activated!" or "Ваш скрипт активирован!"
         statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
         -- Load the main script after verification
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))();
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
         wait(2)
         screenGui:Destroy()
     else
