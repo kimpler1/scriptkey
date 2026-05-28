@@ -1,4 +1,4 @@
 return {
-    key = "nOHUMPzFlCyw",
+    key = "QfPczyTMUzfz",
     botLink = "https://t.me/keyrb_bot"
 }
